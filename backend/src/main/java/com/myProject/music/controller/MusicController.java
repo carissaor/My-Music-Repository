@@ -9,6 +9,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/music")
+@CrossOrigin
 public class MusicController {
     @Autowired
     private MusicService musicService;
