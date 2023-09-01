@@ -7,5 +7,6 @@ public interface MusicServiceInterface {
 
     public Music saveMusic(Music music);
     public List<Music> getAllMusic();
+    public List<Music> getRecommendations();
 }
 

@@ -1,34 +1,26 @@
 package com.myProject.music.model;
-
 import jakarta.persistence.*;
 
 @Entity
 public class Music {
 
-    private enum SongCategory {
-        POP,
-        KPOP,
-        INDIE,
-        COUNTRY
-    }
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    @Column(nullable = false)
     private String title;
     private String artist;
-    private SongCategory category;
+    @Enumerated(EnumType.STRING)
+    private Genre genre;
 
     public Music() {
 
     }
 
-    public Music(int id, String title, String artist, SongCategory category) {
+    public Music(int id, String title, String artist, Genre genre) {
         this.id = id;
         this.title = title;
         this.artist = artist;
-        this.category = category;
+        this.genre = genre;
     }
 
     public int getId() {
@@ -55,11 +47,12 @@ public class Music {
         this.artist = artist;
     }
 
-    public SongCategory getCategory() {
-        return category;
+    public Genre getGenre() {
+        return genre;
     }
 
-    public void setCategory(SongCategory category) {
-        this.category = category;
+    public void setGenre(Genre genre) {
+        this.genre = genre;
     }
 }
+

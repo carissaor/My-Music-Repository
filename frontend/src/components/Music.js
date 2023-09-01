@@ -2,14 +2,19 @@ import React, {useState} from 'react';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import { Container, Paper, Button } from '@mui/material';
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+import FormControl from '@mui/material/FormControl';
+import Select from '@mui/material/Select';
 
 export default function Music () {
   const paperStyle ={padding: '50px 20px', width:600, margin: '200px auto'}
   const [title, setTitle] = useState('')
   const [artist, setArtist] = useState('')
+  const [genre, setGenre]= useState('')
   const handleClick= (e) => {
     e.preventDefault()
-    const music = {title, artist}
+    const music = {title, artist, genre}
     console.log(music)
     fetch("http://localhost:8080/music/add",{
       method: 'POST',
@@ -39,12 +44,28 @@ export default function Music () {
           value = {artist}
           onChange = {(e)=>setArtist(e.target.value)}
           />
+          <FormControl fullWidth>
+            <InputLabel id="demo-simple-select-label">Genre</InputLabel>
+            <Select
+              labelId="demo-simple-select-label"
+              id="demo-simple-select"
+              value={genre}
+              label="Genre"
+              onChange = {(e)=>setGenre(e.target.value)}
+            >
+              <MenuItem value={"POP"}>POP</MenuItem>
+              <MenuItem value={"KPOP"}>KPOP</MenuItem>
+              <MenuItem value={"INDIE"}>INDIE</MenuItem>
+              <MenuItem value={"COUNTRY"}>COUNTRY</MenuItem>
+            </Select>
+          </FormControl>
           <Button variant="contained" onClick={handleClick}
           >Add
           </Button>
         </Box>
       </Paper> 
     </Container>
-    
   );
 }
+
+

@@ -24,4 +24,11 @@ public class MusicController {
     public List<Music> getAllMusic() {
         return musicService.getAllMusic();
     }
+
+    @GetMapping("/getRecommendation")
+    public List<Music> getRecommendation() {
+        // Your logic to generate and return song recommendations
+        List<Music> recommendations = musicService.getRecommendations();
+        return recommendations;
+    }
 }
