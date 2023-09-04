@@ -7,16 +7,16 @@ import org.apache.hc.core5.http.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import se.michaelthelin.spotify.SpotifyApi;
-import se.michaelthelin.spotify.SpotifyHttpManager;
 import se.michaelthelin.spotify.exceptions.SpotifyWebApiException;
 import se.michaelthelin.spotify.model_objects.specification.Recommendations;
 import se.michaelthelin.spotify.requests.data.browse.GetRecommendationsRequest;
 
+import java.io.FileInputStream;
 import java.io.IOException;
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Properties;
 
 @Service
 public class MusicService implements MusicServiceInterface {
@@ -36,32 +36,39 @@ public class MusicService implements MusicServiceInterface {
 
     @Override
     public List<Music> getRecommendations() {
-        String clientId = System.getenv("SPOTIFY_CLIENT_ID");
-        String clientSecret = System.getenv("SPOTIFY_CLIENT_SECRET");
-        String accessToken = System.getenv("SPOTIFY_ACCESS_TOKEN");
-        URI redirect = SpotifyHttpManager.makeUri("http://localhost:3000/");
+        Properties properties = new Properties();
+        try (FileInputStream fileInputStream = new FileInputStream("backend/application.properties")) {
+            properties.load(fileInputStream);
+            String accessToken = properties.getProperty("SPOTIFY_ACCESS_TOKEN");
+            // Use the accessToken in your application
+            String seedArtists = "7nqOGRxlXj7N2JYbgNEjYH"; // todo: update this according to user
+            String seedGenres = "anime";
+            int limit = 3; // Number of recommendations
 
-        SpotifyApi spotifyApi = new SpotifyApi.Builder()
-                .setClientId(clientId)
-                .setClientSecret(clientSecret)
-                .setRedirectUri(redirect)
-                .setAccessToken(accessToken)
-                .build();
+            SpotifyApi spotifyApi = new SpotifyApi.Builder()
+                    .setAccessToken(accessToken)
+                    .build();
 
-        GetRecommendationsRequest getRecommendationsRequest = spotifyApi.getRecommendations()
-                .limit(3) // Number of recommendations
-                .build();
+            GetRecommendationsRequest getRecommendationsRequest = spotifyApi.getRecommendations()
+                    .limit(limit)
+                    .seed_artists(seedArtists)
+                    .seed_genres(seedGenres)
+                    .build();
 
-        try {
-            Recommendations recommendations = getRecommendationsRequest.execute();
-            // Process the recommendations and convert to Music objects
-            List<Music> recommendedSongs = convertToMusicObjects(recommendations);
-            return recommendedSongs;
-        } catch (IOException | SpotifyWebApiException | ParseException e) {
+            try {
+                Recommendations recommendations = getRecommendationsRequest.execute();
+                List<Music> recommendedSongs = convertToMusicObjects(recommendations);
+                return recommendedSongs;
+            } catch (IOException | SpotifyWebApiException | ParseException e) {
+                e.printStackTrace();
+                return Collections.emptyList();
+            }
+        } catch (IOException e) {
             e.printStackTrace();
-            return Collections.emptyList();
         }
+        return null;
     }
+
 
     private List<Music> convertToMusicObjects(Recommendations recommendations) {
         List<Music> musicList = new ArrayList<>();
@@ -69,7 +76,7 @@ public class MusicService implements MusicServiceInterface {
             Music music = new Music();
             music.setTitle(track.getName());
             music.setArtist(track.getArtists()[0].getName()); // Assuming the first artist
-            music.setGenre(mapGenre(track)); 
+            music.setGenre(mapGenre(track));
             musicList.add(music);
         }
 
@@ -92,3 +99,4 @@ public class MusicService implements MusicServiceInterface {
         }
     }
 }
+

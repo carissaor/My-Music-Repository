@@ -25,10 +25,10 @@ public class MusicController {
         return musicService.getAllMusic();
     }
 
-    @GetMapping("/getRecommendation")
-    public List<Music> getRecommendation() {
-        // Your logic to generate and return song recommendations
+    @GetMapping("/getRecommendations")
+    public List<Music> getRecommendations() {
         List<Music> recommendations = musicService.getRecommendations();
         return recommendations;
     }
+
 }

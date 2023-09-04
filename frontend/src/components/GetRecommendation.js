@@ -6,7 +6,7 @@ function GetRecommendation() {
 
   const handleGetRecommendation = async () => {
     try {
-      const response = await fetch("http://localhost:8080/music/getRecommendation"); // Change this URL to match your backend API endpoint
+      const response = await fetch("http://localhost:8080/music/getRecommendations"); 
       const data = await response.json();
       setRecommendations(data);
       console.log(data)
@@ -20,7 +20,6 @@ function GetRecommendation() {
       <Button variant="outlined" onClick={handleGetRecommendation}>
         Get Recommendation
       </Button>
-      {/* Display recommended songs */}
       {recommendations.map((song, index) => (
         <div key={index}>
           <p>{song.name}</p>
